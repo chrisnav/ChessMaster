@@ -14,138 +14,148 @@ bool Piece::move(int new_x, int new_y)
     if (new_x == this->x && new_y == this->y) //Piece not moved
         return false;
 
-    if (!this->validate_move(new_x, new_y)) //This piece cannot move like this
-        return false;
-
     this->prev_x.push_back(this->x);
     this->prev_y.push_back(this->y);
 
     this->x = new_x;
     this->y = new_y;
 
+    this->moved_last_turn = true;
+    this->has_moevd = true;
     return true;
 }
 
-void Piece::generate_possible_moves()
+void Piece::add_possible_move(int x, int y)
 {
-    for (int x = 0; x < 8; ++x)
-    {
-        for (int y = 0; y < 8; ++y)
-        {
-            if (x == this->x && y == this->y)
-                continue;
+    if (x < 0 || x > 7 || y < 0 || y > 7) //Outside board
+        return;
 
-            bool ok = this->validate_move(x, y);
-            if (ok)
-            {
-                this->possible_x.push_back(x);
-                this->possible_y.push_back(y);
-            }
-        }
+    if (x == this->x && y == this->y) //Piece not moved
+        return;
+
+    this->possible_x.push_back(x);
+    this->possible_y.push_back(y);
+}
+
+void Pawn::generate_possible_moves()
+{
+    this->possible_x.clear();
+    this->possible_y.clear();
+
+    int x = this->x;
+    int y = this->y;
+
+    //The pawn should have been transformed
+    if (y == 7)
+        return;
+
+    //One step forward
+    this->add_possible_move(x, y + 1);
+
+    //Two steps forward from initial position
+    if (!this->has_moevd && y == 1)
+        this->add_possible_move(x, y + 2);
+
+    //Captures
+    this->add_possible_move(x - 1, y + 1);
+    this->add_possible_move(x + 1, y + 1);
+}
+
+void Rook::generate_possible_moves()
+{
+    this->possible_x.clear();
+    this->possible_y.clear();
+
+    int x = this->x;
+    int y = this->y;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        this->add_possible_move(i, y);
+        this->add_possible_move(x, i);
     }
 }
 
-bool Pawn::validate_move(int new_x, int new_y)
+void Knight::generate_possible_moves()
 {
-    int abs_dx = abs(new_x - this->x);
-    int dy = new_y - this->y;
+    this->possible_x.clear();
+    this->possible_y.clear();
 
-    //Can only move 1 to the side (when capturing)
-    if (abs_dx > 1)
-        return false;
+    int x = this->x;
+    int y = this->y;
 
-    //Can't move backwards or more than 2 spaces forwards
-    if (dy <= 0 || dy > 2)
-        return false;
-
-    //Can only move 2 spaces when in the start row, and not when capturing
-    if (dy == 2 && (this->y != 1 || abs_dx > 0))
-        return false;
-
-    return true;
+    this->add_possible_move(x - 2, y - 1);
+    this->add_possible_move(x - 2, y + 1);
+    this->add_possible_move(x + 2, y - 1);
+    this->add_possible_move(x + 2, y + 1);
+    this->add_possible_move(x - 1, y - 2);
+    this->add_possible_move(x - 1, y + 2);
+    this->add_possible_move(x + 1, y - 2);
+    this->add_possible_move(x + 1, y + 2);
 }
 
-bool Rook::validate_move(int new_x, int new_y)
+void Bishop::generate_possible_moves()
 {
-    //Illegal to change both x and y cooridinates
-    if (new_x != this->x && new_y != this->y)
-        return false;
+    this->possible_x.clear();
+    this->possible_y.clear();
 
-    return true;
-}
+    int x = this->x;
+    int y = this->y;
 
-bool Knight::validate_move(int new_x, int new_y)
-{
-    int abs_dx = abs(new_x - this->x);
-    int abs_dy = abs(new_y - this->y);
-
-    //Two to the side and 1 up or down is ok
-    if (abs_dx == 2 && abs_dy == 1)
-        return true;
-
-    //One to the side and 2 up or down is ok
-    if (abs_dx == 1 && abs_dy == 2)
-        return true;
-
-    return false;
-}
-
-bool Bishop::validate_move(int new_x, int new_y)
-{
-    int abs_dx = abs(new_x - this->x);
-    int abs_dy = abs(new_y - this->y);
-
-    //Diagonal move is ok
-    if (abs_dx == abs_dy)
-        return true;
-
-    return false;
-}
-
-bool Queen::validate_move(int new_x, int new_y)
-{
-    int abs_dx = abs(new_x - this->x);
-    int abs_dy = abs(new_y - this->y);
-
-    //Diagonal move is ok
-    if (abs_dx == abs_dy)
-        return true;
-
-    //Move up/down is ok
-    if (abs_dx == 0 && abs_dy > 0)
-        return true;
-
-    //Move sideways is ok
-    if (abs_dy == 0 && abs_dx > 0)
-        return true;
-
-    return false;
-}
-
-bool King::validate_move(int new_x, int new_y)
-{
-    int abs_dx = abs(new_x - this->x);
-    int abs_dy = abs(new_y - this->y);
-
-    //One step in any direction is ok
-    if (abs_dx <= 1 && abs_dy <= 1)
-        return true;
-
-    //Castling is ok if the king has no previous moves
-    if (abs_dy == 0 && abs_dx == 2 && this->prev_x.size() == 0)
-        return true;
-
-    return false;
-}
-
-int main()
-{
-    Knight p = Knight(1, 4);
-    p.generate_possible_moves();
-
-    int n = p.possible_x.size();
-    for (int i = 0; i < n; ++i)
+    for (int i = 0; i < 8; ++i)
     {
-        cout << p.possible_x[i] << "," << p.possible_y[i] << endl;
+        this->add_possible_move(x + i, y + i);
+        this->add_possible_move(x + i, y - i);
+        this->add_possible_move(x - i, y + i);
+        this->add_possible_move(x - i, y - i);
+    }
+}
+
+void Queen::generate_possible_moves()
+{
+    this->possible_x.clear();
+    this->possible_y.clear();
+
+    int x = this->x;
+    int y = this->y;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        //Diagonal
+        this->add_possible_move(x + i, y + i);
+        this->add_possible_move(x + i, y - i);
+        this->add_possible_move(x - i, y + i);
+        this->add_possible_move(x - i, y - i);
+
+        //Horizontal and vertical
+        this->add_possible_move(i, y);
+        this->add_possible_move(x, i);
+    }
+}
+
+void King::generate_possible_moves()
+{
+    this->possible_x.clear();
+    this->possible_y.clear();
+
+    int x = this->x;
+    int y = this->y;
+
+    this->add_possible_move(x - 1, y - 1);
+    this->add_possible_move(x - 1, y);
+    this->add_possible_move(x - 1, y + 1);
+
+    this->add_possible_move(x, y + 1);
+    this->add_possible_move(x, y - 1);
+
+    this->add_possible_move(x + 1, y - 1);
+    this->add_possible_move(x + 1, y);
+    this->add_possible_move(x + 1, y + 1);
+
+    //Castling
+    if (!this->has_moevd && x == 4 && y == 0)
+    {
+        this->add_possible_move(x + 2, y);
+        this->add_possible_move(x - 2, y);
     }
 }

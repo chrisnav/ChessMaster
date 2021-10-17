@@ -22,8 +22,9 @@
 		  "/Zi",
 		  "/EHsc",
 		  "/Fe:",
-		  "${workspaceFolder}\\myProgram.exe",
-		  "${workspaceFolder}\\src\\*.cpp"
+		  "${workspaceFolder}\\chess_master.exe",
+		  "${workspaceFolder}\\src\\*.cpp",
+		  "${workspaceFolder}\\*.cpp"
 		],
 		"problemMatcher": ["$msCompile"],
 		"group": {
