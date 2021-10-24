@@ -52,13 +52,13 @@ Player::~Player()
     delete this->king;
 }
 
-bool Player::remove_piece(int x, int y)
+bool Player::remove_piece(Position pos)
 {
     for (int i = 0; i < this->pawns.size(); ++i)
     {
         Pawn *p = this->pawns[i];
 
-        if (p->confirm_position(x, y))
+        if (p->confirm_position(pos))
         {
             this->pawns.erase(this->pawns.begin() + i);
             delete p;
@@ -70,7 +70,7 @@ bool Player::remove_piece(int x, int y)
     {
         Rook *r = this->rooks[i];
 
-        if (r->confirm_position(x, y))
+        if (r->confirm_position(pos))
         {
             this->rooks.erase(this->rooks.begin() + i);
             delete r;
@@ -82,7 +82,7 @@ bool Player::remove_piece(int x, int y)
     {
         Knight *kn = this->knights[i];
 
-        if (kn->confirm_position(x, y))
+        if (kn->confirm_position(pos))
         {
             this->knights.erase(this->knights.begin() + i);
             delete kn;
@@ -94,7 +94,7 @@ bool Player::remove_piece(int x, int y)
     {
         Bishop *b = this->bishops[i];
 
-        if (b->confirm_position(x, y))
+        if (b->confirm_position(pos))
         {
             this->bishops.erase(this->bishops.begin() + i);
             delete b;
@@ -106,7 +106,7 @@ bool Player::remove_piece(int x, int y)
     {
         Queen *q = this->queens[i];
 
-        if (q->confirm_position(x, y))
+        if (q->confirm_position(pos))
         {
             this->queens.erase(this->queens.begin() + i);
             delete q;
@@ -137,40 +137,3 @@ int Player::total_value()
 
     return value;
 }
-
-void Player::update_possible_moves(bool force_update)
-{
-    for(auto p : this->pawns)
-    {
-        if(force_update || p->moved_last_turn)
-            p->generate_possible_moves();
-    }
-
-    for(auto p : this->rooks)
-    {
-        if(force_update || p->moved_last_turn)
-            p->generate_possible_moves();
-    }
-
-    for(auto p : this->knights)
-    {
-        if(force_update || p->moved_last_turn)
-            p->generate_possible_moves();
-    }
-
-    for(auto p : this->bishops)
-    {
-        if(force_update || p->moved_last_turn)
-            p->generate_possible_moves();
-    }
-
-    for(auto p : this->queens)
-    {
-        if(force_update || p->moved_last_turn)
-            p->generate_possible_moves();
-    }
-
-    if(force_update || this->king->moved_last_turn)
-        this->king->generate_possible_moves();
-}
-

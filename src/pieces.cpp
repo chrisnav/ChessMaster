@@ -5,20 +5,26 @@
 
 using namespace std;
 
-bool Piece::move(int new_x, int new_y)
+bool is_inside_board(Position p)
+{
+    int x = p.get_x();
+    int y = p.get_y();
+
+    return (x >= 0 && x <= 7 && y >= 0 && y <= 7);
+}
+
+bool Piece::move(Position new_pos)
 {
 
-    if (new_x < 0 || new_x > 7 || new_y < 0 || new_y > 7) //Outside board
+    if (!is_inside_board(new_pos)) //Outside board
         return false;
 
-    if (new_x == this->x && new_y == this->y) //Piece not moved
+    if (new_pos.is_equal(this->pos)) //Piece not moved
         return false;
 
-    this->prev_x.push_back(this->x);
-    this->prev_y.push_back(this->y);
+    this->prev_pos.push_back(this->pos);
 
-    this->x = new_x;
-    this->y = new_y;
+    this->pos = new_pos;
 
     this->moved_last_turn = true;
     this->has_moevd = true;
@@ -27,135 +33,190 @@ bool Piece::move(int new_x, int new_y)
 
 void Piece::add_possible_move(int x, int y)
 {
-    if (x < 0 || x > 7 || y < 0 || y > 7) //Outside board
+    Position p = Position(x, y);
+
+    if (!is_inside_board(p)) //Outside board
         return;
 
-    if (x == this->x && y == this->y) //Piece not moved
+    if (p.is_equal(this->pos)) //Piece not moved
         return;
 
-    this->possible_x.push_back(x);
-    this->possible_y.push_back(y);
+    this->possible_moves.push_back(p);
 }
 
-void Pawn::generate_possible_moves()
+void Pawn::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
-
-    int x = this->x;
-    int y = this->y;
+    int x = p.get_x();
+    int y = p.get_y();
 
     //The pawn should have been transformed
     if (y == 7)
         return;
 
     //One step forward
-    this->add_possible_move(x, y + 1);
+    moves->push_back(Position(x, y + 1));
 
     //Two steps forward from initial position
     if (!this->has_moevd && y == 1)
-        this->add_possible_move(x, y + 2);
+        moves->push_back(Position(x, y + 2));
 
     //Captures
-    this->add_possible_move(x - 1, y + 1);
-    this->add_possible_move(x + 1, y + 1);
+    moves->push_back(Position(x - 1, y + 1));
+    moves->push_back(Position(x + 1, y + 1));
 }
 
-void Rook::generate_possible_moves()
+void Rook::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
-
-    int x = this->x;
-    int y = this->y;
+    int x = p.get_x();
+    int y = p.get_y();
 
     for (int i = 0; i < 8; ++i)
     {
-        this->add_possible_move(i, y);
-        this->add_possible_move(x, i);
+        if (i != x)
+            moves->push_back(Position(i, y));
+
+        if (i != y)
+            moves->push_back(Position(x, i));
     }
 }
 
-void Knight::generate_possible_moves()
+void Knight::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
+    int x = p.get_x();
+    int y = p.get_y();
 
-    int x = this->x;
-    int y = this->y;
+    Position q = Position(x - 2, y - 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
 
-    this->add_possible_move(x - 2, y - 1);
-    this->add_possible_move(x - 2, y + 1);
-    this->add_possible_move(x + 2, y - 1);
-    this->add_possible_move(x + 2, y + 1);
-    this->add_possible_move(x - 1, y - 2);
-    this->add_possible_move(x - 1, y + 2);
-    this->add_possible_move(x + 1, y - 2);
-    this->add_possible_move(x + 1, y + 2);
+    q = Position(x - 2, y + 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x + 2, y - 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x + 2, y + 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x - 1, y - 2);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x - 1, y + 2);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x + 1, y - 2);
+    if (is_inside_board(q))
+        moves->push_back(q);
+
+    q = Position(x + 1, y + 2);
+    if (is_inside_board(q))
+        moves->push_back(q);
 }
 
-void Bishop::generate_possible_moves()
+void Bishop::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
-
-    int x = this->x;
-    int y = this->y;
+    int x = p.get_x();
+    int y = p.get_y();
 
     for (int i = 0; i < 8; ++i)
     {
-        this->add_possible_move(x + i, y + i);
-        this->add_possible_move(x + i, y - i);
-        this->add_possible_move(x - i, y + i);
-        this->add_possible_move(x - i, y - i);
+        Position q = Position(x + i, y + i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x + i, y - i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x - i, y + i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x - i, y - i);
+        if (is_inside_board(q))
+            moves->push_back(q);
     }
 }
 
-void Queen::generate_possible_moves()
+void Queen::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
-
-    int x = this->x;
-    int y = this->y;
+    int x = p.get_x();
+    int y = p.get_y();
 
     for (int i = 0; i < 8; ++i)
     {
         //Diagonal
-        this->add_possible_move(x + i, y + i);
-        this->add_possible_move(x + i, y - i);
-        this->add_possible_move(x - i, y + i);
-        this->add_possible_move(x - i, y - i);
+        Position q = Position(x + i, y + i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x + i, y - i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x - i, y + i);
+        if (is_inside_board(q))
+            moves->push_back(q);
+
+        q = Position(x - i, y - i);
+        if (is_inside_board(q))
+            moves->push_back(q);
 
         //Horizontal and vertical
-        this->add_possible_move(i, y);
-        this->add_possible_move(x, i);
+        if (i != x)
+            moves->push_back(Position(i, y));
+
+        if (i != y)
+            moves->push_back(Position(x, i));
     }
 }
 
-void King::generate_possible_moves()
+void King::generate_moves_from_pos(Position p, std::vector<Position> *moves)
 {
-    this->possible_x.clear();
-    this->possible_y.clear();
+    int x = p.get_x();
+    int y = p.get_y();
 
-    int x = this->x;
-    int y = this->y;
+    Position q = Position(x - 1, y - 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
 
-    this->add_possible_move(x - 1, y - 1);
-    this->add_possible_move(x - 1, y);
-    this->add_possible_move(x - 1, y + 1);
+    q = Position(x - 1, y);
+    if (is_inside_board(q))
+        moves->push_back(q);
 
-    this->add_possible_move(x, y + 1);
-    this->add_possible_move(x, y - 1);
+    q = Position(x - 1, y + 1);
+    if (is_inside_board(q))
+        moves->push_back(q);
 
-    this->add_possible_move(x + 1, y - 1);
-    this->add_possible_move(x + 1, y);
-    this->add_possible_move(x + 1, y + 1);
+    q = Position(x, y + 1);
+    if (is_inside_board(q))
+        moves->push_back(q);  
+
+    q = Position(x, y - 1);
+    if (is_inside_board(q))
+        moves->push_back(q);  
+
+    q = Position(x + 1, y - 1);
+    if (is_inside_board(q))
+        moves->push_back(q);  
+
+    q = Position(x + 1, y);
+    if (is_inside_board(q))
+        moves->push_back(q);  
+
+    q = Position(x + 1, y + 1);
+    if (is_inside_board(q))
+        moves->push_back(q);                          
 
     //Castling
     if (!this->has_moevd && x == 4 && y == 0)
     {
-        this->add_possible_move(x + 2, y);
-        this->add_possible_move(x - 2, y);
+        moves->push_back(Position(x + 2, y));
+        moves->push_back(Position(x - 2, y));
     }
 }

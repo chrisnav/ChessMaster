@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "player.h"
-
 class Game
 {
 private:
@@ -18,6 +17,10 @@ public:
 
     void move_white();
     void move_black();
+
+    bool is_check();
+
+
 
 };
 

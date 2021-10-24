@@ -20,9 +20,8 @@ public:
     Player(bool is_white);
     ~Player();
 
-    bool remove_piece(int x, int y);
+    bool remove_piece(Position pos);
     int total_value();
-    void update_possible_moves(bool force_update);
 };
 
 #endif

@@ -18,11 +18,16 @@ Game::~Game()
 void Game::move_white()
 {
     Player* p = this->white;
+  
+}
 
-    if(this->n_white_moves == 0)
-        p->update_possible_moves(true);
-    else
-        p->update_possible_moves(false);
+void Game::move_black()
+{
+    Player* p = this->black;
 
-    
+}
+
+bool Game::is_check()
+{
+    return false;
 }
