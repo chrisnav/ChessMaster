@@ -3,17 +3,17 @@
 
 #include <vector>
 #include "pieces.h"
-using namespace std;
+using std::vector;
 
 class Player
 {
 private:
     bool is_white;
-    std::vector<Pawn *> pawns;
-    std::vector<Rook *> rooks;
-    std::vector<Knight *> knights;
-    std::vector<Bishop *> bishops;
-    std::vector<Queen *> queens;
+    vector<Pawn *> pawns;
+    vector<Rook *> rooks;
+    vector<Knight *> knights;
+    vector<Bishop *> bishops;
+    vector<Queen *> queens;
     King *king;
 
 public:

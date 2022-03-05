@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "pieces.h"
-
-using namespace std;
+#include "headers\pieces.h"
 
 bool is_inside_board(Position p)
 {
@@ -44,7 +42,7 @@ void Piece::add_possible_move(int x, int y)
     this->possible_moves.push_back(p);
 }
 
-void Pawn::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void Pawn::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();
@@ -65,7 +63,7 @@ void Pawn::generate_moves_from_pos(Position p, std::vector<Position> *moves)
     moves->push_back(Position(x + 1, y + 1));
 }
 
-void Rook::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void Rook::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();
@@ -80,7 +78,7 @@ void Rook::generate_moves_from_pos(Position p, std::vector<Position> *moves)
     }
 }
 
-void Knight::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void Knight::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();
@@ -118,7 +116,7 @@ void Knight::generate_moves_from_pos(Position p, std::vector<Position> *moves)
         moves->push_back(q);
 }
 
-void Bishop::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void Bishop::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();
@@ -143,7 +141,7 @@ void Bishop::generate_moves_from_pos(Position p, std::vector<Position> *moves)
     }
 }
 
-void Queen::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void Queen::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();
@@ -176,7 +174,7 @@ void Queen::generate_moves_from_pos(Position p, std::vector<Position> *moves)
     }
 }
 
-void King::generate_moves_from_pos(Position p, std::vector<Position> *moves)
+void King::generate_moves_from_pos(Position p, vector<Position> *moves)
 {
     int x = p.get_x();
     int y = p.get_y();

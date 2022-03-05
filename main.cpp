@@ -1,8 +1,8 @@
 #include <vector>
 #include <iostream>
-#include "src\pieces.h"
-#include "src\player.h"
-#include "src\game.h"
+#include "src\headers\pieces.h"
+#include "src\headers\player.h"
+#include "src\headers\game.h"
 
 using namespace std;
 

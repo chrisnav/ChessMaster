@@ -1,4 +1,4 @@
-#include "player.h"
+#include "headers\player.h"
 
 Player::Player(bool is_white)
 {
