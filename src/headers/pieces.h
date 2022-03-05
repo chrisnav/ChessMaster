@@ -37,7 +37,7 @@ public:
 
     bool move(Position new_pos);
     void add_possible_move(int x, int y);
-    virtual void generate_moves_from_pos(Position p, vector<Position> *moves){};
+    virtual vector<Position> generate_moves(){};
     bool confirm_position(Position p) { return (this->pos.is_equal(p)); };
     int get_value() { return this->value; };
 };
@@ -47,7 +47,7 @@ class Pawn : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     Pawn(int x, int y) : Piece(x, y) { value = 1; };
     ~Pawn(){};
 };
@@ -57,7 +57,7 @@ class Rook : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     Rook(int x, int y) : Piece(x, y) { value = 5; };
     ~Rook(){};
 };
@@ -67,7 +67,7 @@ class Knight : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     Knight(int x, int y) : Piece(x, y) { value = 3; };
     ~Knight(){};
 };
@@ -77,7 +77,7 @@ class Bishop : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     Bishop(int x, int y) : Piece(x, y) { value = 3; };
     ~Bishop(){};
 };
@@ -87,7 +87,7 @@ class Queen : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     Queen(int x, int y) : Piece(x, y) { value = 9; };
     ~Queen(){};
 };
@@ -97,7 +97,7 @@ class King : public Piece
     //private:
 
 public:
-    void generate_moves_from_pos(Position p, vector<Position> *moves);
+    vector<Position> generate_moves();
     King(int x, int y) : Piece(x, y) { value = 1000; };
     ~King(){};
 };

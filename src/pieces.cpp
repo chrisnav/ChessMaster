@@ -3,6 +3,7 @@
 #include <string>
 #include "headers\pieces.h"
 
+
 bool Position::is_inside_board()
 {
     return (this->x >= 0 && this->x <= 7 && this->y >= 0 && this->y <= 7);
@@ -39,161 +40,156 @@ void Piece::add_possible_move(int x, int y)
     this->possible_moves.push_back(p);
 }
 
-void Pawn::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> Pawn::generate_moves()
 {
+    vector<Position> moves;
+    Position p = this->pos;
+
     //The pawn should have been transformed
     if (p.y == 7)
         return;
 
     //One step forward
-    moves->push_back(Position(p.x, p.y + 1));
+    moves.push_back(Position(p.x, p.y + 1));
 
     //Two steps forward from initial position
     if (!this->has_moevd && p.y == 1)
-        moves->push_back(Position(p.x, p.y + 2));
+        moves.push_back(Position(p.x, p.y + 2));
 
     //Captures
-    moves->push_back(Position(p.x - 1, p.y + 1));
-    moves->push_back(Position(p.x + 1, p.y + 1));
+    Position q = Position(p.x - 1, p.y + 1);
+    if(q.is_inside_board())
+        moves.push_back(q);
+
+    q = Position(p.x + 1, p.y + 1);
+    if(q.is_inside_board())
+        moves.push_back(q);        
+
+    return moves;
 }
 
-void Rook::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> Rook::generate_moves()
 {
+    vector<Position> moves;
+    Position p = this->pos;
+
     for (int i = 0; i < 8; ++i)
     {
         if (i != p.x)
-            moves->push_back(Position(i, p.y));
+            moves.push_back(Position(i, p.y));
 
         if (i != p.y)
-            moves->push_back(Position(p.x, i));
+            moves.push_back(Position(p.x, i));
     }
+
+    return moves;
 }
 
-void Knight::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> Knight::generate_moves()
 {
-    Position q = Position(p.x - 2, p.y - 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
+    vector<Position> moves;
+    vector<Position> all_moves;
+    Position p = this->pos;
 
-    q = Position(p.x - 2, p.y + 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
+    all_moves.push_back(Position(p.x - 2, p.y - 1));
+    all_moves.push_back(Position(p.x - 2, p.y + 1));
+    all_moves.push_back(Position(p.x + 2, p.y - 1));
+    all_moves.push_back(Position(p.x + 2, p.y + 1));
+    all_moves.push_back(Position(p.x - 1, p.y - 2));
+    all_moves.push_back(Position(p.x - 1, p.y + 2));
+    all_moves.push_back(Position(p.x + 1, p.y - 2));
+    all_moves.push_back(Position(p.x + 1, p.y + 2));
 
-    q = Position(p.x + 2, p.y - 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
+    for(auto q : all_moves)
+    {
+        if(q.is_inside_board())
+            moves.push_back(q);
+    }
 
-    q = Position(p.x + 2, p.y + 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x - 1, p.y - 2);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x - 1, p.y + 2);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x + 1, p.y - 2);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x + 1, p.y + 2);
-    if (q.is_inside_board())
-        moves->push_back(q);
+    return moves;
 }
 
-void Bishop::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> Bishop::generate_moves()
 {
+    vector<Position> moves;
+    vector<Position> all_moves;
+    Position p = this->pos;
+
     for (int i = 0; i < 8; ++i)
     {
-        Position q = Position(p.x + i, p.y + i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x + i, p.y - i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x - i, p.y + i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x - i, p.y - i);
-        if (q.is_inside_board())
-            moves->push_back(q);
+        all_moves.push_back(Position(p.x + i, p.y + i));
+        all_moves.push_back(Position(p.x + i, p.y - i));
+        all_moves.push_back(Position(p.x - i, p.y + i));
+        all_moves.push_back(Position(p.x - i, p.y - i));
     }
+
+    for(auto q : all_moves)
+    {
+        if(q.is_inside_board())
+            moves.push_back(q);
+    }
+
+    return moves;
 }
 
-void Queen::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> Queen::generate_moves()
 {
+    vector<Position> moves;
+    vector<Position> all_moves;
+    Position p = this->pos;
+
     for (int i = 0; i < 8; ++i)
     {
         //Diagonal
-        Position q = Position(p.x + i, p.y + i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x + i, p.y - i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x - i, p.y + i);
-        if (q.is_inside_board())
-            moves->push_back(q);
-
-        q = Position(p.x - i, p.y - i);
-        if (q.is_inside_board())
-            moves->push_back(q);
+        all_moves.push_back(Position(p.x + i, p.y + i));
+        all_moves.push_back(Position(p.x + i, p.y - i));
+        all_moves.push_back(Position(p.x - i, p.y + i));
+        all_moves.push_back(Position(p.x - i, p.y - i));
 
         //Horizontal and vertical
         if (i != p.x)
-            moves->push_back(Position(i, p.y));
+            all_moves.push_back(Position(i, p.y));
 
         if (i != p.y)
-            moves->push_back(Position(p.x, i));
+            all_moves.push_back(Position(p.x, i));
     }
+
+    for(auto q : all_moves)
+    {
+        if(q.is_inside_board())
+            moves.push_back(q);
+    }
+
+    return moves;
 }
 
-void King::generate_moves_from_pos(Position p, vector<Position> *moves)
+vector<Position> King::generate_moves()
 {
-    Position q = Position(p.x - 1, p.y - 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
+    vector<Position> moves;  
+    vector<Position> all_moves;  
+    Position p = this->pos;
+    
+    all_moves.push_back(Position(p.x - 1, p.y - 1));
+    all_moves.push_back(Position(p.x - 1, p.y));
+    all_moves.push_back(Position(p.x - 1, p.y + 1));
+    all_moves.push_back(Position(p.x, p.y + 1));
+    all_moves.push_back(Position(p.x, p.y - 1));
+    all_moves.push_back(Position(p.x + 1, p.y - 1));
+    all_moves.push_back(Position(p.x + 1, p.y));
+    all_moves.push_back(Position(p.x + 1, p.y + 1));                 
 
-    q = Position(p.x - 1, p.y);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x - 1, p.y + 1);
-    if (q.is_inside_board())
-        moves->push_back(q);
-
-    q = Position(p.x, p.y + 1);
-    if (q.is_inside_board())
-        moves->push_back(q);  
-
-    q = Position(p.x, p.y - 1);
-    if (q.is_inside_board())
-        moves->push_back(q);  
-
-    q = Position(p.x + 1, p.y - 1);
-    if (q.is_inside_board())
-        moves->push_back(q);  
-
-    q = Position(p.x + 1, p.y);
-    if (q.is_inside_board())
-        moves->push_back(q);  
-
-    q = Position(p.x + 1, p.y + 1);
-    if (q.is_inside_board())
-        moves->push_back(q);                          
+    for(auto q : all_moves)
+    {
+        if(q.is_inside_board())
+            moves.push_back(q);
+    }
 
     //Castling
     if (!this->has_moevd && p.x == 4 && p.y == 0)
     {
-        moves->push_back(Position(p.x + 2, p.y));
-        moves->push_back(Position(p.x - 2, p.y));
+        moves.push_back(Position(p.x + 2, p.y));
+        moves.push_back(Position(p.x - 2, p.y));
     }
+
+    return moves;
 }
