@@ -4,21 +4,17 @@
 #include <vector>
 using std::vector;
 
-class Position
+struct Position
 {
-private:
     int x;
     int y;
 
-public:
     Position(int x, int y) : x(x), y(y){};
-    int get_x() { return x; };
-    int get_y() { return y; };
-    bool is_equal(Position p) { return (x == p.get_x() && this->y == p.get_y()); };
+    bool is_equal(Position p) { return (x == p.x && this->y == p.y); };
+    bool is_inside_board();
     ~Position(){};
 };
 
-bool is_inside_board(Position p);
 class Piece
 {
 protected:
