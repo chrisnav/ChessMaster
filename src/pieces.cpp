@@ -47,7 +47,7 @@ vector<Position> Pawn::generate_moves()
 
     //The pawn should have been transformed
     if (p.y == 7)
-        return;
+        return moves;
 
     //One step forward
     moves.push_back(Position(p.x, p.y + 1));

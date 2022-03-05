@@ -1,4 +1,5 @@
 #include "headers\game.h"
+#include "headers\player.h"
 
 Game::Game()
 {
@@ -25,6 +26,11 @@ void Game::move_black()
 {
     Player* p = this->black;
 
+}
+
+void Game::generate_all_valid_moves()
+{
+    
 }
 
 bool Game::is_check()

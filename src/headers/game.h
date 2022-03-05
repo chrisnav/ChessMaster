@@ -1,7 +1,6 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
-#include "player.h"
+class Player;
 class Game
 {
 private:
@@ -17,12 +16,10 @@ public:
 
     void move_white();
     void move_black();
+    void generate_all_valid_moves();
 
     bool is_check();
 
 
 
 };
-
-
-#endif

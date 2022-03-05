@@ -1,5 +1,4 @@
-#ifndef PIECES_H
-#define PIECES_H
+#pragma once
 
 #include <vector>
 using std::vector;
@@ -37,7 +36,7 @@ public:
 
     bool move(Position new_pos);
     void add_possible_move(int x, int y);
-    virtual vector<Position> generate_moves(){};
+    virtual vector<Position> generate_moves(){return {};};
     bool confirm_position(Position p) { return (this->pos.is_equal(p)); };
     int get_value() { return this->value; };
 };
@@ -101,5 +100,3 @@ public:
     King(int x, int y) : Piece(x, y) { value = 1000; };
     ~King(){};
 };
-
-#endif
